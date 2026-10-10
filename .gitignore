@@ -1,0 +1,62 @@
+# Lentech Nexus - root .gitignore
+
+# Python / Django
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+ENV/
+
+# Local databases (never commit user data)
+*.sqlite3
+*.sqlite3-journal
+db.sqlite3
+*.sqlite3.*.bak
+*.bak
+
+# Generated OpenAPI schema
+/lentech-nexus-backend/schema.yml
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+*.pem
+
+# Django
+/media/
+/staticfiles/
+staticfiles/
+
+# Node / frontend
+node_modules/
+dist/
+dist-ssr/
+build/
+.dist/
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Test / coverage
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Editor / OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
