@@ -1,105 +1,216 @@
-﻿.navbar {
-    padding: 20px 40px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: #ffffff;
-    border-bottom: 1px solid #e2e8f0;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    box-shadow: 0 2px 10px rgba(0,0, 0, 0.05);
+﻿/* ---------------------------------------------------------------------------
+   Application navbar
+   A translucent, "glassy" purple-on-white bar. Each destination is an icon +
+   label pill; the Messages item can carry an unread notification badge.
+--------------------------------------------------------------------------- */
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 40px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: saturate(180%) blur(14px);
+  border-bottom: 1px solid #ece7fb;
+  box-shadow: 0 8px 24px rgba(76, 29, 149, 0.06);
 }
+
+/* Brand ------------------------------------------------------------------ */
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: #2e1065;
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #4c1d95, #7c3aed 55%, #a855f7);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  box-shadow: 0 6px 16px rgba(109, 40, 217, 0.35);
+}
+
+.brand:hover .brand-name {
+  color: #7c3aed;
+}
+
+/* Links ------------------------------------------------------------------ */
 
 .nav-links {
-    display: flex;
-    align-items: center;
-    gap: 30px;
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-.nav-links a {
-    text-decoration: none;
-    color: #334155;
-    font-size: 15px;
-    font-weight: 500;
-    transition: color 0.3s ease;
+.nav-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #4b4b63;
+  font-size: 0.95rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background 0.18s ease, color 0.18s ease, transform 0.12s ease;
 }
-.nav-links a:hover {
-    color: #7c3aed;
+
+.nav-icon {
+  display: inline-flex;
+  align-items: center;
+  color: currentColor;
 }
+
+.nav-link:hover {
+  color: #5b21b6;
+  background: #f3eefe;
+  transform: translateY(-1px);
+}
+
+.nav-link.active {
+  color: #6d28d9;
+  background: linear-gradient(180deg, #f5f3ff, #ede9fe);
+  box-shadow: inset 0 0 0 1px #ddd6fe;
+}
+
+/* Unread badge ----------------------------------------------------------- */
+
+.nav-badge {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 800;
+  line-height: 20px;
+  text-align: center;
+  box-shadow: 0 0 0 2px #fff;
+}
+
+.nav-link.has-badge {
+  color: #6d28d9;
+}
+
+.nav-link.has-badge .nav-badge {
+  animation: badge-pop 1.8s ease-in-out infinite;
+}
+
+@keyframes badge-pop {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.12); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-link.has-badge .nav-badge { animation: none; }
+}
+
+/* Call to action + logout ------------------------------------------------ */
 
 .nav-cta {
-    padding: 8px 16px;
-    border-radius: 999px;
-    background: linear-gradient(135deg, #312e81, #7c3aed);
-    color: #fff !important;
+  background: linear-gradient(135deg, #4c1d95, #7c3aed);
+  color: #fff !important;
+  box-shadow: 0 6px 16px rgba(109, 40, 217, 0.3);
+}
+
+.nav-cta:hover {
+  box-shadow: 0 8px 20px rgba(109, 40, 217, 0.42);
 }
 
 .nav-logout {
-    border: none;
-    background: none;
-    color: #334155;
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
-    padding: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background: none;
+  color: #4b4b56;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 .nav-logout:hover {
-    color: #7c3aed;
+  color: #dc2626;
+  background: #fef2f2;
 }
+
+/* Mobile toggle ---------------------------------------------------------- */
 
 .nav-toggle {
+  display: none;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  color: #4c1d95;
+  border-radius: 10px;
+  padding: 7px;
+  cursor: pointer;
+}
+
+@media (max-width: 860px) {
+  .navbar {
+    padding: 14px 20px;
+    flex-wrap: wrap;
+  }
+
+  .nav-toggle {
+    display: inline-flex;
+  }
+
+  .brand-name {
+    font-size: 1.1rem;
+  }
+
+  .nav-links {
     display: none;
-    border: 1px solid #e2e8f0;
-    background: #fff;
-    border-radius: 8px;
-    font-size: 20px;
-    line-height: 1;
-    padding: 6px 10px;
-    cursor: pointer;
-}
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: 4px;
+    padding-top: 14px;
+  }
 
-.brand {
-    text-decoration: none;
-    color: #172554;
-    font-size: 23px;
-    font-weight: 800;
-    letter-spacing: -0.8px;
-}
-.brand:hover {
-    color: #7c3aed;
-}
+  .nav-links.open {
+    display: flex;
+  }
 
-@media (max-width: 768px) {
-    .navbar {
-        padding: 16px 20px;
-        flex-wrap: wrap;
-    }
+  .nav-link,
+  .nav-logout {
+    width: 100%;
+    justify-content: flex-start;
+  }
 
-    .nav-toggle {
-        display: block;
-    }
-
-    .nav-links {
-        display: none;
-        flex-direction: column;
-        align-items: flex-start;
-        width: 100%;
-        gap: 16px;
-        padding-top: 16px;
-    }
-
-    .nav-links.open {
-        display: flex;
-    }
+  .nav-badge {
+    margin-left: auto;
+  }
 }
 
 @media (min-width: 769px) {
-    .nav-links {
-        display: flex;
-    }
+  .nav-links {
+    display: flex;
+  }
 }

@@ -28,6 +28,27 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'username', 'is_staff', 'date_joined', 'role']
 
 
+class PublicUserSerializer(serializers.ModelSerializer):
+    """Lightweight user card for pickers (e.g. starting a chat).
+
+    Exposes only public, non-sensitive fields plus the profile image so the chat
+    UI can show avatars without a second request. Email and staff flags are
+    intentionally omitted.
+    """
+
+    display_name = serializers.CharField(read_only=True)
+    avatar = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'display_name', 'role', 'avatar']
+
+    def get_avatar(self, obj) -> str:
+        # The developer profile is optional, so guard against a missing relation.
+        profile = getattr(obj, 'developer_profile', None)
+        return getattr(profile, 'profile_image', '') or ''
+
+
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, style={'input_type': 'password'})
     password_confirm = serializers.CharField(

@@ -1,6 +1,7 @@
 import io
 
 from django.contrib.auth import get_user_model
+from django.test import override_settings
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -110,6 +111,7 @@ class DeveloperApiTests(APITestCase):
         self.assertTrue(Developer.objects.filter(user=self.user).exists())
 
 
+@override_settings(CLOUDINARY_ENABLED=False)
 class ProfileImageTests(APITestCase):
     def setUp(self):
         self.user = User.objects.create_user(

@@ -64,6 +64,8 @@ INSTALLED_APPS = [
     'developers',
     'projects',
     'ideas',
+    'posts',
+    'chat',
 ]
 
 MIDDLEWARE = [
@@ -245,8 +247,14 @@ CLOUDINARY_ENABLED = env_bool('CLOUDINARY_ENABLED', False)
 CLOUDINARY_CLOUD_NAME = os.getenv('CLOUDINARY_CLOUD_NAME', '')
 CLOUDINARY_API_KEY = os.getenv('CLOUDINARY_API_KEY', '')
 CLOUDINARY_API_SECRET = os.getenv('CLOUDINARY_API_SECRET', '')
-CLOUDINARY_UPLOAD_FOLDER = os.getenv('CLOUDINARY_UPLOAD_FOLDER', 'lentech_nexus/profiles')
+CLOUDINARY_UPLOAD_FOLDER = os.getenv('CLOUDINARY_UPLOAD_FOLDER', 'lentech_nexus/media')
+
+# Upload limits in megabytes, enforced in core.services.storage BEFORE anything
+# is sent to Cloudinary. Keeping the limits here makes them configurable per
+# environment without code changes.
 MAX_PROFILE_IMAGE_MB = int(os.getenv('MAX_PROFILE_IMAGE_MB', '5'))
+MAX_POST_IMAGE_MB = int(os.getenv('MAX_POST_IMAGE_MB', '8'))
+MAX_POST_VIDEO_MB = int(os.getenv('MAX_POST_VIDEO_MB', '25'))
 
 # ---------------------------------------------------------------------------
 # Security hardening (enforced only when DEBUG is off)

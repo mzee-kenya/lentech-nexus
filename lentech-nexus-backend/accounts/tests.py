@@ -151,3 +151,34 @@ class AccountSettingsTests(APITestCase):
             format='json',
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class UserDirectoryTests(APITestCase):
+    def setUp(self):
+        self.me = User.objects.create_user(
+            username='me', email='me@example.com', password='Str0ng!pass'
+        )
+        self.bob = User.objects.create_user(
+            username='bob', email='bob@example.com', password='Str0ng!pass', first_name='Bob'
+        )
+        self.carol = User.objects.create_user(
+            username='carol', email='carol@example.com', password='Str0ng!pass'
+        )
+
+    def test_requires_authentication(self):
+        response = self.client.get('/api/auth/users/')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_lists_others_and_excludes_self(self):
+        self.client.force_authenticate(user=self.me)
+        response = self.client.get('/api/auth/users/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        usernames = {u['username'] for u in response.data['results']}
+        self.assertEqual(usernames, {'bob', 'carol'})
+
+    def test_search_filters_results(self):
+        self.client.force_authenticate(user=self.me)
+        response = self.client.get('/api/auth/users/?search=bob')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['count'], 1)
+        self.assertEqual(response.data['results'][0]['username'], 'bob')

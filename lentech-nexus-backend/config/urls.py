@@ -2,6 +2,7 @@
 
 from django.contrib import admin
 from django.urls import include, path
+from django.views.generic import RedirectView
 from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularRedocView,
@@ -9,6 +10,8 @@ from drf_spectacular.views import (
 )
 
 urlpatterns = [
+    path('', RedirectView.as_view(url='/api/docs/', permanent=False)),
+
     path('admin/', admin.site.urls),
 
     # API
@@ -16,6 +19,8 @@ urlpatterns = [
     path('api/', include('developers.urls')),
     path('api/', include('projects.urls')),
     path('api/', include('ideas.urls')),
+    path('api/', include('posts.urls')),
+    path('api/', include('chat.urls')),
 
     # OpenAPI documentation
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),

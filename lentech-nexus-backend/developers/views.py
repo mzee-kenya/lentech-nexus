@@ -97,28 +97,6 @@ class DeveloperViewSet(viewsets.ModelViewSet):
                 storage.delete_image(public_id)
             return Response(DeveloperSerializer(profile).data)
 
-    @action(
-        detail=False,
-        methods=['post', 'delete'],
-        permission_classes=[IsAuthenticated],
-        url_path='me/photo',
-        parser_classes=[MultiPartParser, FormParser],
-    )
-    def photo(self, request):
-        profile, _ = Developer.objects.get_or_create(
-            user=request.user,
-            defaults={'name': request.user.display_name, 'role': ''},
-        )
-
-        if request.method == 'DELETE':
-            public_id = profile.profile_image_public_id
-            profile.profile_image = ''
-            profile.profile_image_public_id = ''
-            profile.save(update_fields=['profile_image', 'profile_image_public_id', 'updated_at'])
-            if public_id:
-                storage.delete_image(public_id)
-            return Response(DeveloperSerializer(profile).data)
-
         uploaded = request.FILES.get('image') or request.FILES.get('file')
         if not uploaded:
             raise ValidationError({'image': ['No image file was provided.']})

@@ -1,21 +1,24 @@
-from django.contrib.auth import login, logout, update_session_auth_hash
+from django.contrib.auth import get_user_model, login, logout, update_session_auth_hash
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.middleware.csrf import get_token
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie
 from drf_spectacular.utils import OpenApiResponse, extend_schema, inline_serializer
-from rest_framework import generics, serializers, status
+from rest_framework import filters, generics, serializers, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .serializers import (
     LoginSerializer,
+    PublicUserSerializer,
     RegisterSerializer,
     UserSerializer,
     UserUpdateSerializer,
 )
+
+User = get_user_model()
 
 
 _EmptySerializer = type('EmptySerializer', (serializers.Serializer,), {})
@@ -72,6 +75,26 @@ class LogoutView(APIView):
     def post(self, request):
         logout(request)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class UserDirectoryView(generics.ListAPIView):
+    """List other members so the chat UI can start conversations.
+
+    The caller is excluded (you cannot chat with yourself) and ``?search=``
+    matches username, first or last name for a type-ahead picker.
+    """
+
+    serializer_class = PublicUserSerializer
+    permission_classes = [IsAuthenticated]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['username', 'first_name', 'last_name']
+
+    def get_queryset(self):
+        return (
+            User.objects.exclude(pk=self.request.user.pk)
+            .select_related('developer_profile')
+            .order_by('username')
+        )
 
 
 class MeView(generics.RetrieveUpdateAPIView):

@@ -1,9 +1,16 @@
 import type {
+  ChatMessage,
+  Conversation,
+  ConversationMember,
   Developer,
   Idea,
   JoinRequest,
+  LikeState,
   Paginated,
+  Post,
+  PostComment,
   Project,
+  PublicUser,
   User,
 } from '../types/api'
 import { apiFetch, ensureCsrf } from './client'
@@ -171,5 +178,99 @@ export const joinRequests = {
   },
   reject(id: number) {
     return apiFetch<unknown>(`/api/join-requests/${id}/reject/`, { method: 'POST' })
+  },
+}
+
+export const posts = {
+  list(params?: Record<string, string>) {
+    const qs = params ? '?' + new URLSearchParams(params).toString() : ''
+    return apiFetch<Paginated<Post>>(`/api/posts/${qs}`)
+  },
+  get(id: number) {
+    return apiFetch<Post>(`/api/posts/${id}/`)
+  },
+  // Media is sent as multipart/form-data so the browser streams the file
+  // without base64-encoding it into JSON.
+  create(payload: { body: string; image?: File | null; video?: File | null }) {
+    const fd = new FormData()
+    if (payload.body) fd.append('body', payload.body)
+    if (payload.image) fd.append('image', payload.image)
+    if (payload.video) fd.append('video', payload.video)
+    return apiFetch<Post>('/api/posts/', { method: 'POST', body: fd })
+  },
+  remove(id: number) {
+    return apiFetch<void>(`/api/posts/${id}/`, { method: 'DELETE' })
+  },
+  like(id: number) {
+    return apiFetch<LikeState>(`/api/posts/${id}/like/`, { method: 'POST' })
+  },
+  unlike(id: number) {
+    return apiFetch<LikeState>(`/api/posts/${id}/like/`, { method: 'DELETE' })
+  },
+  comments(id: number, params?: Record<string, string>) {
+    const qs = params ? '?' + new URLSearchParams(params).toString() : ''
+    return apiFetch<Paginated<PostComment>>(`/api/posts/${id}/comments/${qs}`)
+  },
+  addComment(id: number, body: string) {
+    return apiFetch<PostComment>(`/api/posts/${id}/comments/`, {
+      method: 'POST',
+      body: JSON.stringify({ body }),
+    })
+  },
+  removeComment(commentId: number) {
+    return apiFetch<void>(`/api/comments/${commentId}/`, { method: 'DELETE' })
+  },
+}
+
+export const users = {
+  // Directory of other members, used by the chat user-picker. Supports
+  // ``search`` for type-ahead.
+  list(params?: Record<string, string>) {
+    const qs = params ? '?' + new URLSearchParams(params).toString() : ''
+    return apiFetch<Paginated<PublicUser>>(`/api/auth/users/${qs}`)
+  },
+}
+
+export const chat = {
+  list(params?: Record<string, string>) {
+    const qs = params ? '?' + new URLSearchParams(params).toString() : ''
+    return apiFetch<Paginated<Conversation>>(`/api/conversations/${qs}`)
+  },
+  get(id: number) {
+    return apiFetch<Conversation>(`/api/conversations/${id}/`)
+  },
+  create(payload: { kind: 'direct' | 'group'; title?: string; member_ids: number[] }) {
+    return apiFetch<Conversation>('/api/conversations/', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    })
+  },
+  messages(id: number, params?: Record<string, string>) {
+    const qs = params ? '?' + new URLSearchParams(params).toString() : ''
+    return apiFetch<Paginated<ChatMessage>>(`/api/conversations/${id}/messages/${qs}`)
+  },
+  // Total unread messages across all conversations, for the navbar badge.
+  unreadCount() {
+    return apiFetch<{ unread: number }>('/api/conversations/unread/')
+  },
+  sendMessage(id: number, body: string) {
+    return apiFetch<ChatMessage>(`/api/conversations/${id}/messages/`, {
+      method: 'POST',
+      body: JSON.stringify({ body }),
+    })
+  },
+  addMember(id: number, userId: number) {
+    return apiFetch<ConversationMember>(`/api/conversations/${id}/members/`, {
+      method: 'POST',
+      body: JSON.stringify({ user_id: userId }),
+    })
+  },
+  removeMember(id: number, userId: number) {
+    return apiFetch<void>(`/api/conversations/${id}/members/${userId}/`, {
+      method: 'DELETE',
+    })
+  },
+  leave(id: number) {
+    return apiFetch<void>(`/api/conversations/${id}/leave/`, { method: 'POST' })
   },
 }

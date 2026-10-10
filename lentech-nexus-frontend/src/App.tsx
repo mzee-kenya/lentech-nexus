@@ -14,6 +14,11 @@ import ProjectDetail from './pages/ProjectDetail'
 import IdeaDetail from './pages/IdeaDetail'
 import ProjectCreate from './pages/ProjectCreate'
 import IdeaCreate from './pages/IdeaCreate'
+import Feed from './pages/Feed'
+import PostCreate from './pages/PostCreate'
+import PostDetail from './pages/PostDetail'
+import Chat from './pages/Chat'
+import Conversation from './pages/Conversation'
 
 function App() {
   return (
@@ -27,6 +32,11 @@ function App() {
           <Route path="/ideas" element={<IdeasPage />} />
           <Route path="/ideas/new" element={<ProtectedRoute><IdeaCreate /></ProtectedRoute>} />
           <Route path="/ideas/:id" element={<IdeaDetail />} />
+          <Route path="/feed" element={<Feed />} />
+          <Route path="/feed/new" element={<ProtectedRoute><PostCreate /></ProtectedRoute>} />
+          <Route path="/feed/:id" element={<PostDetail />} />
+          <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
+          <Route path="/chat/:id" element={<ProtectedRoute><Conversation /></ProtectedRoute>} />
           <Route path="/developers" element={<DevelopersPage />} />
           <Route path="/developers/:id" element={<DeveloperDetail />} />
           <Route path="/login" element={<Login />} />

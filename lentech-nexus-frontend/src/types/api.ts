@@ -88,3 +88,79 @@ export interface JoinRequest {
   reviewed_at: string | null
   created_at: string
 }
+
+export interface Post {
+  id: number
+  body: string
+  image_url: string
+  video_url: string
+  author_id: number
+  author_username: string
+  author_display_name: string
+  author_avatar: string
+  like_count: number
+  comment_count: number
+  viewer_has_liked: boolean
+  created_at: string
+  updated_at?: string
+  viewer_is_author?: boolean
+}
+
+export interface PostComment {
+  id: number
+  post: number
+  author_id: number
+  author_username: string
+  author_display_name: string
+  author_avatar: string
+  body: string
+  created_at: string
+}
+
+export interface LikeState {
+  like_count: number
+  comment_count: number
+  viewer_has_liked: boolean
+}
+
+export interface ConversationMember {
+  user_id: number
+  username: string
+  display_name: string
+  avatar: string
+  role: string
+  joined_at: string
+}
+
+export interface PublicUser {
+  id: number
+  username: string
+  display_name: string
+  role: string
+  avatar: string
+}
+
+export interface Conversation {
+  id: number
+  kind: 'direct' | 'group'
+  title: string
+  display_title: string
+  viewer_role: string | null
+  members: ConversationMember[]
+  member_count: number
+  last_message: { body: string; sender_id: number | null; created_at: string | null } | null
+  unread_count: number
+  created_at: string
+  updated_at: string
+}
+
+export interface ChatMessage {
+  id: number
+  conversation: number
+  sender_id: number
+  sender_username: string
+  sender_display_name: string
+  sender_avatar: string
+  body: string
+  created_at: string
+}

@@ -1,4 +1,6 @@
-const DEFAULT_BASE = import.meta.env.VITE_API_BASE_URL ?? 'http://127.0.0.1:8000'
+// In development the API is reached through the Vite proxy (same origin), so
+// the base is empty by default. Set VITE_API_BASE_URL in production.
+const DEFAULT_BASE = import.meta.env.VITE_API_BASE_URL ?? ''
 
 function getCsrfCookie(): string | undefined {
   const name = 'csrftoken'
@@ -24,6 +26,13 @@ export async function apiFetch<T>(
 ): Promise<T> {
   const url = `${DEFAULT_BASE}${path}`
   const method = (init.method ?? 'GET').toUpperCase()
+
+  // State-changing requests require a CSRF cookie. Fetch one on demand so the
+  // first write after a page reload never fails with "CSRF token missing".
+  if (method !== 'GET' && method !== 'HEAD' && method !== 'OPTIONS' && !getCsrfCookie()) {
+    await ensureCsrf()
+  }
+
   const headers = new Headers(init.headers)
   if (!headers.has('Accept')) headers.set('Accept', 'application/json')
   if (method !== 'GET' && method !== 'HEAD' && method !== 'OPTIONS') {
